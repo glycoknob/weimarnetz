@@ -382,7 +382,7 @@ case "$HARDWARE" in
 esac
 
 #get old hostname or hostname set in system config
-OLD_HOSTNAME="$( uci -q get -q meshwizard.system.hostname )"
+OLD_HOSTNAME="$( uci -q get meshwizard.system.hostname )"
 [ -z "$OLD_HOSTNAME" ] && {
 	OLD_HOSTNAME="$( uci -q get system.@system[0].hostname )"
 }
@@ -745,7 +745,7 @@ _config_wireless ()			# fixme! channels hardcoded
 
 	case "$PROFILE_MODE" in
 		hybrid)
-			local ssid_adhoc="ff.intern.$NODE.${radiotype##11}"			# fixme! work with 'hidden'
+			local ssid_adhoc="ff.intern.$NODE.ch$CHANNEL"			# fixme! work with 'hidden'
 			local ssid_ap="$( uci -q get wireless.@wifi-iface[$(( ${radiocard} + 1 ))].ssid )"
 			[ -z "$ssid_ap" -o "$ssid_ap" = "OpenWrt" ] && ssid_ap="Weimarnetz - Knoten $NODE"
 
@@ -1465,9 +1465,10 @@ EOF
 }
 
 [ -e "/etc/kalua_init" ] && {
-	local PARTITION="$( mount | sed -n 's/\(^.*mtd.*\) on .*/\1/p' )"       
-        local flash_free=$(df | sed -n "s#^${PARTITION:-/dev/root}[^0-9]*[0-9]*[^0-9]*[0-9]*[^0-9]*\([0-9]*\).*#\1#p")
-	local total_ram=$( grep MemTotal /proc/meminfo | cut -f2 -d ':'| cut -f1 -d 'k'| tr -d ' ')
+	PARTITION="$( mount | sed -n 's/\(^.*mtd.*\) on .*/\1/p' )"       
+        flash_free=$(df | sed -n "s#^${PARTITION:-/dev/root}[^0-9]*[0-9]*[^0-9]*[0-9]*[^0-9]*\([0-9]*\).*#\1#p")
+	total_ram=$( grep MemTotal /proc/meminfo | cut -f2 -d ':'| cut -f1 -d 'k'| tr -d ' ')
+
 	if [ $total_ram -lt 16384 ] && [ $flash_free -gt 340 ]; then
 		log "[OK] building kalua-loader on flash, we are low on RAM =< 16mb"
         	mkdir "/etc/kalua.w"
