@@ -27,17 +27,6 @@ while getopts "S:a:A:rlpfOPHU" FLAG; do {
 					case "$MINUTE" in
 						00|15|30|45)
 							echo >>$SCHEDULER '/etc/init.d/S69watch_olsrd_fff+'
-
-							case "$MINUTE" in
-								00)
-									case "$HOUR" in
-										04)
-											echo >>$SCHEDULER '_firmware update_pmu'
-										;;
-									esac
-								;;
-							esac
-
 							echo >>$SCHEDULER '_watch hanging_command usual_suspects'
 						;;
 					esac
